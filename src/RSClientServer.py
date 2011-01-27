@@ -115,6 +115,8 @@ class CRSServer(CXMLRPCServer):
         CXMLRPCServer.__init__(self,0x001154,host,port)
         self.register_function(self.WC_close, "PyRoboticStudio.close")
         self.register_function(self.WC_hello, "PyRoboticStudio.hello")
+        self.register_function(self.WC_input, "PyRoboticStudio.input")
+        self.register_function(self.WC_output, "PyRoboticStudio.output")
         
         self.Clients = {}
         
@@ -123,15 +125,13 @@ class CRSServer(CXMLRPCServer):
         return 1
     def WC_hello(self,param,port,sender='None'):
         print 'WC - Hello: %s:%d:%s'%(param,port,sender) 
-        host = 'http://localhost:%d' % port
-        print host
-        if sender.upper() == 'ENV':
-            if not self.Clients.has_key('ENV'):
-                self.Clients[sender] = CRSClient(host,'SERVER','1_0_0_0')
-                return 1
-            else:
-                print 'Only one environment is permitted'
-                return 0            
+        return 0            
+    def WC_input(self,port,sender):
+        print 'WC_input: ',sender
+        return None
+    def WC_output(self,port,sender,data):
+        print 'WC_output: ',sender
+        return 0
          
 if __name__ == '__main__':
     # Tester 
