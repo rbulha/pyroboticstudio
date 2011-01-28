@@ -115,8 +115,6 @@ class CRSServer(CXMLRPCServer):
         CXMLRPCServer.__init__(self,0x001154,host,port)
         self.register_function(self.WC_close, "PyRoboticStudio.close")
         self.register_function(self.WC_hello, "PyRoboticStudio.hello")
-        self.register_function(self.WC_input, "PyRoboticStudio.input")
-        self.register_function(self.WC_output, "PyRoboticStudio.output")
         
         self.Clients = {}
         
@@ -126,12 +124,6 @@ class CRSServer(CXMLRPCServer):
     def WC_hello(self,param,port,sender='None'):
         print 'WC - Hello: %s:%d:%s'%(param,port,sender) 
         return 0            
-    def WC_input(self,port,sender):
-        print 'WC_input: ',sender
-        return None
-    def WC_output(self,port,sender,data):
-        print 'WC_output: ',sender
-        return 0
          
 if __name__ == '__main__':
     # Tester 

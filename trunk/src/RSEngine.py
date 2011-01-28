@@ -21,6 +21,8 @@ class CRSEngine(CRSServer):
             print 'CRSEngine fail creating the XML-RPC server'
         else:
             print 'CRSEngine server listening!!'
+            self.register_function(self.WC_input, "PyRoboticStudio.input")
+            self.register_function(self.WC_output, "PyRoboticStudio.output")
         '''
         Properties
         '''

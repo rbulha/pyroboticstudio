@@ -12,13 +12,13 @@ class CRSDSS(CRSService):
     '''
     This class represents an actuator (differential steering system)
     '''
-    def __init__(self,local_port):
+    def __init__(self,local_port,remote_port=49580):
         '''
         Constructor
         '''
         if local_port >= 49601 and local_port <= 49700:
             try:
-                CRSService.__init__(self,'DSS',local_port,49580) #local_port from 49601 to 49700
+                CRSService.__init__(self,'DSS',local_port,remote_port) #local_port from 49601 to 49700
             except:
                 print 'CRSDSS - XML-RPC server fail'
             else:
@@ -70,12 +70,13 @@ class CRSDSS(CRSService):
             output['X'] = X
             output['Y'] = Y
             output['O'] = angle 
+            print 'output: ',output
             self.crsServer.PyRoboticStudio.output(output)
         
 if __name__ == '__main__':
     # Tester 
     try:    
-        cService = CRSDSS(49601) 
+        cService = CRSDSS(49601,49580) 
     except:
         print 'CRSDSS - XML-RPC creation fail!'
     else:  
