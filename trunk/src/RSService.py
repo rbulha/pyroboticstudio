@@ -15,14 +15,15 @@ class CRSService(CRSServer):
         '''
         Constructor
         '''
+        self.service_name = service_name
+        self.local_port = local_port
         try:
-            CRSServer.__init__('localhost',local_port)
-            self.service_name = service_name
-            self.local_port = local_port
+            CRSServer.__init__(self,'localhost',local_port)
         except:
-            print '%s fail creating the XML-RPC server'%service_name
+            print '[CRSService.__init__] %s fail creating the XML-RPC server port=%d'%(service_name,local_port)
+            raise
         else:
-            print '%s server listening!!'%service_name
+            print '[CRSService.__init__]%s server listening port %d!!'%(service_name,local_port)
             self.register_function(self.WC_input, "PyRoboticStudio.input")
             self.register_function(self.WC_output, "PyRoboticStudio.output")
         try:
@@ -30,22 +31,24 @@ class CRSService(CRSServer):
             host = 'http://localhost:%d' % self.remote_port
             self.crsClient = CRSClient(host, service_name, '1_0_0_0')
         except:
-            print '%s fail connecting to the server'%service_name
+            print '[CRSService.__init__] %s fail connecting to the server'%service_name
+            raise
         else:
-            print '%s connected!!'%service_name
-
-        try:        
-            if not self.crsClient.Hello(self.local_port):
-                print '%s - Hello not accepted.'%service_name
-        except:
-            print 'XML-RPC hello fail!'
-        else:
-            print '%s - Initialization DONE.'%service_name
-                    
+            print '[CRSService.__init__] %s connected!!'%service_name
+            try:        
+                if not self.crsClient.Hello(self.local_port):
+                    print '[CRSService.__init__] %s - Hello not accepted.'%service_name
+            except:
+                print '[CRSService.__init__] XML-RPC hello fail!'
+                raise
+            else:
+                print '[CRSService.__init__] %s - Initialization DONE.'%service_name
+                        
     def WC_input(self,port,sender):
         print 'WC_input: ',sender
         return None
     def WC_output(self,port,sender,data):
         print 'WC_output: ',sender
         return 0
+    
                     

@@ -22,14 +22,23 @@ class MyHandler(SimpleXMLRPCRequestHandler):
 
 class CXMLRPCServer(Thread,SimpleXMLRPCServer):      
     def __init__(self, indentificador, host, port):
-        '''Using fix port defined for the System302 = 12436'''
-        Thread.__init__(self)
-        SimpleXMLRPCServer.__init__(self,(host, port),MyHandler,logRequests=1)
-        self.register_function(self.Ping, "PyRoboticStudio.ping")
-        self.register_introspection_functions()    
-        self.id = indentificador
-        self.isRunning = True
-        self.setDaemon(True)
+        try:
+            Thread.__init__(self)
+        except:
+            print '[CXMLRPCServer.__init__] - error in thread init '
+            raise
+        else:    
+            try:
+                SimpleXMLRPCServer.__init__(self,(host, port),MyHandler,logRequests=1)
+            except:
+                print '[CXMLRPCServer.__init__] - SimpleXMLRPCServer init fail '
+                raise
+            else:
+                self.register_function(self.Ping, "PyRoboticStudio.ping")
+                self.register_introspection_functions()    
+                self.id = indentificador
+                self.isRunning = True
+                self.setDaemon(True)
     def GetServerInfo(self):  
         return self.socket.getsockname()
     def Ping(self):
@@ -112,9 +121,18 @@ class CRSServer(CXMLRPCServer):
         '''
         Constructor
         '''
-        CXMLRPCServer.__init__(self,0x001154,host,port)
-        self.register_function(self.WC_close, "PyRoboticStudio.close")
-        self.register_function(self.WC_hello, "PyRoboticStudio.hello")
+        try:
+            CXMLRPCServer.__init__(self,0x001154,host,port)
+        except:
+            print '[CRSServer.__init__] fail create CXMLRPServer (%s::%d)'%(host,port)
+            raise
+        else:
+            try:
+                self.register_function(self.WC_close, "PyRoboticStudio.close")
+                self.register_function(self.WC_hello, "PyRoboticStudio.hello")
+            except:
+                print '[CRSServer.__init__] - fail in register functions'
+                raise
         
         self.Clients = {}
         

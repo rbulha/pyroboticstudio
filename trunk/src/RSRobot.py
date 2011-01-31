@@ -19,25 +19,39 @@ class CRSRobot(CRSService):
             try:
                 CRSService.__init__(self,'ROBOT',local_port,remote_port) #local_port from 49582 to 49600
             except:
-                print 'CRSRobot - XML-RPC server fail'
+                print '[CRSRobot.__init__] - XML-RPC server fail'
             else:
-                print 'CRSRobot - running'
+                print '[CRSRobot.__init__] - running'
         else:
-            print 'CRSRobot - running out of ports'
+            print '[CRSRobot.__init__] - running out of ports'
+        self.data = {}
+        self.data['local'] = {}
+        self.data['local']['VR'] = 0.2
+        self.data['local']['VL'] = 0.42
+            
     def WC_hello(self,param,port,sender='None'):
         host = 'http://localhost:%d' % port
         if sender.upper() == 'DSS':
             if not self.Clients.has_key('DSS'):
                 self.Clients[sender.upper()] = CRSClient(host,'ROBOT','1_0_0_0')
+                print '[CRSRobot.WC_hello]: Hello %s port=%d'%(sender,port)
                 return 1
             else:
                 print '[CRSRobot.WC_hello]: Only one DSS is permitted'
                 return 0        
     def WC_input(self,port,sender):
-        print '[CRSEngine.WC_input]: ',sender
-        return None
+        print '[CRSRobot.WC_input]: %s::%d'%(sender,port)
+        if sender.upper() == 'DSS':
+            return self.data['local']
+        else:
+            return None
     def WC_output(self,port,sender,data):
-        print '[CRSEngine.WC_output]: ',sender
+        #print '[CRSRobot.WC_output]: ',sender
+        if sender.upper() == 'DSS':
+            self.data['local']['X']=data['X']
+            self.data['local']['Y']=data['Y']
+            self.data['local']['O']=data['O']
+            return 1
         return 0                    
            
 if __name__ == '__main__':
@@ -45,8 +59,9 @@ if __name__ == '__main__':
     try:    
         cService = CRSRobot(49582,49580) 
     except:
-        print 'CRSRobot - XML-RPC creation fail!'
+        print '[TESTER] CRSRobot - XML-RPC creation fail!'
     else:  
-        cService.start()  
+        cService.start()
+        cService.join()  
             
         
