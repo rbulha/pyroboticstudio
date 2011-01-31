@@ -16,11 +16,11 @@ class CRSEngine(CRSServer):
         Constructor
         '''
         try:
-            CRSServer.__init__(self,'localhost',self.local_port) 
+            CRSServer.__init__(self,'localhost',local_port) 
         except:
-            print 'CRSEngine fail creating the XML-RPC server'
+            print '[CRSEngine.__init__] fail creating the XML-RPC server'
         else:
-            print 'CRSEngine server listening!!'
+            print '[CRSEngine.__init__] server listening!!'
             self.register_function(self.WC_input, "PyRoboticStudio.input")
             self.register_function(self.WC_output, "PyRoboticStudio.output")
         '''
@@ -61,13 +61,13 @@ if __name__ == '__main__':
     try:    
         cEngine = CRSEngine(49580) 
     except:
-        print 'cEngine - XML-RPC Server creation fail!'
+        print '[TESTER] cEngine - XML-RPC Server creation fail!'
     else:    
         try:        
             cEngine.start()
             add, port = cEngine.GetServerInfo()
-            print "cEngine - XML-RPC server running: %s::%d"%(add, port)
+            print "[TESTER] cEngine - XML-RPC server running: %s::%d"%(add, port)
         except:
-            print 'cEngine - XML-RPC Server register fail!'
+            print '[TESTER] cEngine - XML-RPC Server register fail!'
         else:
             cEngine.join() #wait until running             

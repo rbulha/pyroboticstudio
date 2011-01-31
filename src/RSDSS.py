@@ -48,12 +48,12 @@ class CRSDSS(CRSService):
         self.O.append(self.O0)
         
         self.wheel_radius = 0.03 #radios of the wheel in meters
-        self.whell_axi_size = 0.15 #distance between whells in meters
-        self.delta_time = 0.1 #delta time in sec.
+        self.whell_axi_size = 0.20 #distance between whells in meters
+        self.delta_time = 0.01 #delta time in sec.
         self.simulation_time = 0 #total simulated time in sec.
  
     def step(self):
-        input = self.crsServer.PyRoboticStudio.input('DSS')
+        input = self.crsClient.PyRoboticStudio.input(self.local_port,'DSS')
         if input and input.has_key('VR') and input.has_key('VL'): 
             self.SR0 = input['VR'] * self.delta_time
             self.SL0 = input['VL'] * self.delta_time
@@ -71,15 +71,16 @@ class CRSDSS(CRSService):
             output['Y'] = Y
             output['O'] = angle 
             print 'output: ',output
-            self.crsServer.PyRoboticStudio.output(output)
+            self.crsClient.PyRoboticStudio.output(self.local_port,'DSS',output)
         
 if __name__ == '__main__':
     # Tester 
     try:    
-        cService = CRSDSS(49601,49580) 
+        cService = CRSDSS(49601,49582) 
     except:
         print 'CRSDSS - XML-RPC creation fail!'
     else:  
         cService.start()
         for loop in range(10):
             cService.step()
+            
