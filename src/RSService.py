@@ -26,6 +26,7 @@ class CRSService(CRSServer):
             print '[CRSService.__init__]%s server listening port %d!!'%(service_name,local_port)
             self.register_function(self.WC_input, "PyRoboticStudio.input")
             self.register_function(self.WC_output, "PyRoboticStudio.output")
+            self.register_function(self.WC_step, "PyRoboticStudio.step")
         try:
             self.remote_port = remote_port
             host = 'http://localhost:%d' % self.remote_port
@@ -49,6 +50,9 @@ class CRSService(CRSServer):
         return None
     def WC_output(self,port,sender,data):
         print 'WC_output: ',sender
+        return 0
+    def WC_step(self):
+        print 'WC_step: '
         return 0
     
                     
