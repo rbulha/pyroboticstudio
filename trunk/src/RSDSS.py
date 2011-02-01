@@ -28,44 +28,47 @@ class CRSDSS(CRSService):
         '''
         Properties
         '''
-        self.X0  = 0
-        self.Y0  = 0
-        self.O0  = 0
-        self.VR0 = 0
-        self.VL0 = 0
-        self.SR0 = 0
-        self.SL0 = 0
-        self.S0  = 0
+        self.data = {}
         
-        self.X = []
-        self.Y = []
-        self.O = []
+        self.data['X0']  = 0
+        self.data['Y0']  = 0
+        self.data['O0']  = 0
+        self.data['VR0'] = 0
+        self.data['VL0'] = 0
+        self.data['SR0'] = 0
+        self.data['SL0'] = 0
+        self.data['S0']  = 0
+        
+        self.data['X'] = []
+        self.data['Y'] = []
+        self.data['O'] = []
         
         #load initial condition
-        self.step_count = 1 #first step keep the initial values
-        self.X.append(self.X0)
-        self.Y.append(self.Y0)
-        self.O.append(self.O0)
+        self.data['step_count'] = 1 #first step keep the initial values
+        self.data['X'].append(self.data['X0'])
+        self.data['Y'].append(self.data['Y0'])
+        self.data['O'].append(self.data['O0'])
         
-        self.wheel_radius = 0.03 #radios of the wheel in meters
-        self.whell_axi_size = 0.20 #distance between whells in meters
-        self.delta_time = 0.01 #delta time in sec.
-        self.simulation_time = 0 #total simulated time in sec.
+        self.data['wheel_radius']    = 0.03 #radios of the wheel in meters
+        self.data['whell_axi_size']  = 0.20 #distance between whells in meters
+        self.data['delta_time']      = 0.01 #delta time in sec.
+        self.data['simulation_time'] = 0 #total simulated time in sec.
  
     def step(self):
-        input = self.crsClient.PyRoboticStudio.input(self.local_port,'DSS')
-        if input and input.has_key('VR') and input.has_key('VL'): 
-            self.SR0 = input['VR'] * self.delta_time
-            self.SL0 = input['VL'] * self.delta_time
-            self.S0  = (self.SR0 + self.SL0) / 2.0
-            angle    = (self.SR0 + self.SL0) / self.whell_axi_size + self.O[self.step_count-1]
-            self.O.append(angle)
-            X = self.S0 * math.cos(angle) + self.X[self.step_count-1]
+        #data request
+        self.data['input'] = self.crsClient.PyRoboticStudio.input(self.local_port,'DSS')
+        if input and self.data['input'].has_key('VR') and self.data['input'].has_key('VL'): 
+            self.data['SR0'] = self.data['input']['VR'] * self.self.data['delta_time']
+            self.data['SL0'] = self.data['input']['VL'] * self.self.data['delta_time']
+            self.data['S0']  = (self.data['SR0'] + self.data['SL0']) / 2.0
+            angle    = (self.data['SR0'] + self.data['SL0']) / self.whell_axi_size + self.data['O'][self.data['step_count']-1]
+            self.data['O'].append(angle)
+            X = self.data['S0'] * math.cos(angle) + self.X[self.data['step_count']-1]
             self.X.append(X)
-            Y = self.S0 * math.sin(angle) + self.Y[self.step_count-1]
+            Y = self.data['S0'] * math.sin(angle) + self.Y[self.data['step_count']-1]
             self.Y.append(Y)
-            self.step_count = self.step_count + 1
-            self.simulation_time = self.simulation_time + self.delta_time
+            self.data['step_count'] = self.data['step_count'] + 1
+            self.data['simulation_time'] = self.data['simulation_time'] + self.data['delta_time']
             output = {}
             output['X'] = X
             output['Y'] = Y

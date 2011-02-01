@@ -29,6 +29,10 @@ class CRSEngine(CRSServer):
         self.delta_time = 0.1 #delta time in sec.
         self.total_simulation_time = 120.0 #total time of the simulation in sec.
         self.local_port = local_port
+        '''
+        Service list
+        '''
+        self.services = {}
         
     def WC_hello(self,param,port,sender='None'):
         print '[CRSEngine.WC_hello]: %s:%d:%s'%(param,port,sender) 
@@ -54,7 +58,11 @@ class CRSEngine(CRSServer):
         return None
     def WC_output(self,port,sender,data):
         print '[CRSEngine.WC_output]: ',sender
-        return 0                    
+        return 0
+    def RegisterService(self,service,local_port,remote_port):
+        if not self.services.has_key(local_port): 
+            self.services[local_port] = service(local_port,remote_port)
+            self.services[local_port].start()
 
 if __name__ == '__main__':
     # Tester 
