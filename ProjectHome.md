@@ -1,0 +1,1 @@
+This project uses services through XML-RMP to create simulated robots and sensors. And using a simulated environment they could be evaluated in real time.
